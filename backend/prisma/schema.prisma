@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  reviews   Review[]
+  votes     Vote[]
+  followers Follow[]    @relation("following")
+  following Follow[]    @relation("follower")
+  badges    UserBadge[]
+
+  @@map("users")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tmdbId    String   @map("tmdb_id")
+  mediaType String   @map("media_type")
+  rating    Int
+  content   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votes Vote[]
+
+  @@unique([userId, tmdbId, mediaType])
+  @@index([tmdbId])
+  @@map("reviews")
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  reviewId  String   @map("review_id")
+  type      String   // 'upvote' | 'downvote'
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reviewId])
+  @@map("votes")
+}
+
+model Follow {
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@map("follows")
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  iconUrl     String   @map("icon_url")
+
+  users UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  userId   String   @map("user_id")
+  badgeId  String   @map("badge_id")
+  earnedAt DateTime @default(now()) @map("earned_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
+}
