@@ -107,4 +107,26 @@ export class PrismaReviewsRepository implements ReviewsRepository {
         })
     );
   }
+
+  async findManyByUserId(userId: string): Promise<Review[]> {
+    const reviews = await prisma.review.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return reviews.map(
+      (review: any) =>
+        new Review({
+          id: review.id,
+          userId: review.userId,
+          tmdbId: review.tmdbId,
+          mediaType: review.mediaType as "movie" | "tv",
+          rating: review.rating,
+          content: review.content,
+          createdAt: review.createdAt,
+          updatedAt: review.updatedAt,
+        })
+    );
+  }
 }

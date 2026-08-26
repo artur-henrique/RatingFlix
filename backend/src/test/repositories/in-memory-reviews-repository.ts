@@ -39,4 +39,8 @@ export class InMemoryReviewsRepository implements ReviewsRepository {
   async findManyByMovie(tmdbId: string, mediaType: "movie" | "tv"): Promise<Review[]> {
     return this.items.filter((item) => item.tmdbId === tmdbId && item.mediaType === mediaType);
   }
+
+  async findManyByUserId(userId: string): Promise<Review[]> {
+    return this.items.filter((item) => item.userId === userId);
+  }
 }
