@@ -7,4 +7,5 @@ export interface ReviewsRepository {
   findById(id: string): Promise<Review | null>;
   findByUserAndMedia(userId: string, tmdbId: string, mediaType: "movie" | "tv"): Promise<Review | null>;
   findManyByMovie(tmdbId: string, mediaType: "movie" | "tv"): Promise<Review[]>;
+  findManyByUserId(userId: string): Promise<Review[]>;
 }
