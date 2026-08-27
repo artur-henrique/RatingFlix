@@ -1,7 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { randomUUID } from "node:crypto";
 import { CreateReviewUseCase } from "./create-review.js";
+import { RecalculateUserGamificationUseCase } from "./recalculate-user-gamification.js";
 import { InMemoryReviewsRepository } from "../../test/repositories/in-memory-reviews-repository.js";
+import { InMemoryVotesRepository } from "../../test/repositories/in-memory-votes-repository.js";
+import { InMemoryBadgesRepository } from "../../test/repositories/in-memory-badges-repository.js";
+import { InMemoryUserBadgesRepository } from "../../test/repositories/in-memory-user-badges-repository.js";
 import { ReviewAlreadyExistsError } from "../errors/review-already-exists-error.js";
 
 let reviewsRepository: InMemoryReviewsRepository;
@@ -10,7 +14,16 @@ let sut: CreateReviewUseCase; // System Under Test
 describe("Create Review Use Case", () => {
   beforeEach(() => {
     reviewsRepository = new InMemoryReviewsRepository();
-    sut = new CreateReviewUseCase(reviewsRepository);
+    const votesRepository = new InMemoryVotesRepository(reviewsRepository);
+    const badgesRepository = new InMemoryBadgesRepository();
+    const userBadgesRepository = new InMemoryUserBadgesRepository(badgesRepository);
+    const recalculateUserGamificationUseCase = new RecalculateUserGamificationUseCase(
+      reviewsRepository,
+      votesRepository,
+      badgesRepository,
+      userBadgesRepository
+    );
+    sut = new CreateReviewUseCase(reviewsRepository, recalculateUserGamificationUseCase);
   });
 
   it("should be able to create a new movie review", async () => {

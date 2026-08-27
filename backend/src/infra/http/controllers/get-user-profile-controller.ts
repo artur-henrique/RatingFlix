@@ -26,7 +26,34 @@ export class GetUserProfileController {
     try {
       const { profile, reviews } = await getUserProfileUseCase.execute({ username, page, perPage });
 
-      return reply.status(200).send({ profile, reviews });
+      return reply.status(200).send({
+        profile: {
+          id: profile.id,
+          username: profile.username,
+          avatarUrl: profile.avatarUrl,
+          createdAt: profile.createdAt,
+          score: profile.score,
+          badges: profile.badges.map((badge) => ({
+            id: badge.id,
+            name: badge.name,
+            description: badge.description,
+            iconUrl: badge.iconUrl,
+          })),
+        },
+        reviews: {
+          ...reviews,
+          items: reviews.items.map((review) => ({
+            id: review.id,
+            userId: review.userId,
+            tmdbId: review.tmdbId,
+            mediaType: review.mediaType,
+            rating: review.rating,
+            content: review.content,
+            createdAt: review.createdAt,
+            updatedAt: review.updatedAt,
+          })),
+        },
+      });
     } catch (err: any) {
       if (err instanceof UserNotFoundError) {
         return reply.status(404).send({ message: err.message });
