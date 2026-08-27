@@ -53,12 +53,34 @@ export class InMemoryReviewsRepository implements ReviewsRepository {
     mediaType: "movie" | "tv",
     { page, perPage }: PaginationParams
   ): Promise<Paginated<ReviewWithAuthor>> {
+    const matching = this.items.filter((item) => item.tmdbId === tmdbId && item.mediaType === mediaType);
+    return this.paginateWithAuthor(matching, page, perPage);
+  }
+
+  async findManyByUserIdPaginated(userId: string, { page, perPage }: PaginationParams): Promise<Paginated<Review>> {
     const matching = this.items
-      .filter((item) => item.tmdbId === tmdbId && item.mediaType === mediaType)
+      .filter((item) => item.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const start = (page - 1) * perPage;
-    const items = matching.slice(start, start + perPage).map((review) => {
+    const items = matching.slice(start, start + perPage);
+
+    return { items, total: matching.length, page, perPage };
+  }
+
+  async findManyByAuthorsPaginated(
+    authorIds: string[],
+    { page, perPage }: PaginationParams
+  ): Promise<Paginated<ReviewWithAuthor>> {
+    const matching = this.items.filter((item) => authorIds.includes(item.userId));
+    return this.paginateWithAuthor(matching, page, perPage);
+  }
+
+  private paginateWithAuthor(matching: Review[], page: number, perPage: number): Paginated<ReviewWithAuthor> {
+    const sorted = matching.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    const start = (page - 1) * perPage;
+    const items = sorted.slice(start, start + perPage).map((review) => {
       const author = this.usersRepository?.items.find((user) => user.id === review.userId);
 
       return {
@@ -77,17 +99,6 @@ export class InMemoryReviewsRepository implements ReviewsRepository {
       };
     });
 
-    return { items, total: matching.length, page, perPage };
-  }
-
-  async findManyByUserIdPaginated(userId: string, { page, perPage }: PaginationParams): Promise<Paginated<Review>> {
-    const matching = this.items
-      .filter((item) => item.userId === userId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-
-    const start = (page - 1) * perPage;
-    const items = matching.slice(start, start + perPage);
-
-    return { items, total: matching.length, page, perPage };
+    return { items, total: sorted.length, page, perPage };
   }
 }

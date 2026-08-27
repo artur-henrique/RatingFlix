@@ -170,6 +170,44 @@ export class PrismaReviewsRepository implements ReviewsRepository {
     };
   }
 
+  async findManyByAuthorsPaginated(
+    authorIds: string[],
+    { page, perPage }: PaginationParams
+  ): Promise<Paginated<ReviewWithAuthor>> {
+    const where = { userId: { in: authorIds } };
+
+    const [reviews, total] = await Promise.all([
+      prisma.review.findMany({
+        where,
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * perPage,
+        take: perPage,
+      }),
+      prisma.review.count({ where }),
+    ]);
+
+    return {
+      items: reviews.map((review: any) => ({
+        id: review.id,
+        tmdbId: review.tmdbId,
+        mediaType: review.mediaType as "movie" | "tv",
+        rating: review.rating,
+        content: review.content,
+        createdAt: review.createdAt,
+        updatedAt: review.updatedAt,
+        author: {
+          id: review.user.id,
+          username: review.user.username,
+          avatarUrl: review.user.avatarUrl,
+        },
+      })),
+      total,
+      page,
+      perPage,
+    };
+  }
+
   async findManyByUserIdPaginated(userId: string, { page, perPage }: PaginationParams): Promise<Paginated<Review>> {
     const where = { userId };
 

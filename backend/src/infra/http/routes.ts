@@ -7,6 +7,8 @@ import { GetUserProfileController } from "./controllers/get-user-profile-control
 import { GetMovieReviewsController } from "./controllers/get-movie-reviews-controller.js";
 import { SearchMoviesController } from "./controllers/search-movies-controller.js";
 import { GetMovieDetailsController } from "./controllers/get-movie-details-controller.js";
+import { FollowUserController } from "./controllers/follow-user-controller.js";
+import { GetUserFeedController } from "./controllers/get-user-feed-controller.js";
 import { authenticate } from "./middlewares/authenticate.js";
 
 const registerUserController = new RegisterUserController();
@@ -17,6 +19,8 @@ const getUserProfileController = new GetUserProfileController();
 const getMovieReviewsController = new GetMovieReviewsController();
 const searchMoviesController = new SearchMoviesController();
 const getMovieDetailsController = new GetMovieDetailsController();
+const followUserController = new FollowUserController();
+const getUserFeedController = new GetUserFeedController();
 
 export async function appRoutes(app: FastifyInstance) {
   app.post("/users", registerUserController.handle);
@@ -33,4 +37,6 @@ export async function appRoutes(app: FastifyInstance) {
   // Authenticated routes
   app.post("/reviews", { preHandler: [authenticate] }, registerReviewController.handle);
   app.post("/reviews/:reviewId/votes", { preHandler: [authenticate] }, voteOnReviewController.handle);
+  app.post("/profiles/:userId/follow", { preHandler: [authenticate] }, followUserController.handle);
+  app.get("/feed", { preHandler: [authenticate] }, getUserFeedController.handle);
 }
