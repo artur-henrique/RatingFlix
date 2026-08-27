@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Review } from "../entities/review.js";
 import { ReviewsRepository } from "../repositories/reviews-repository.js";
 import { ReviewAlreadyExistsError } from "../errors/review-already-exists-error.js";
+import { RecalculateUserGamificationUseCase } from "./recalculate-user-gamification.js";
 
 const createReviewSchema = z.object({
   userId: z.string().uuid("Invalid user ID format"),
@@ -18,7 +19,10 @@ interface CreateReviewResponse {
 }
 
 export class CreateReviewUseCase {
-  constructor(private reviewsRepository: ReviewsRepository) {}
+  constructor(
+    private reviewsRepository: ReviewsRepository,
+    private recalculateUserGamificationUseCase: RecalculateUserGamificationUseCase
+  ) {}
 
   async execute(request: CreateReviewRequest): Promise<CreateReviewResponse> {
     const data = createReviewSchema.parse(request);
@@ -43,6 +47,9 @@ export class CreateReviewUseCase {
     });
 
     await this.reviewsRepository.create(review);
+
+    // Creating a review changes the author's review count, which affects their score/badges
+    await this.recalculateUserGamificationUseCase.execute({ userId: data.userId });
 
     return { review };
   }
