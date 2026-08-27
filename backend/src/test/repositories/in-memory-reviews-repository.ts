@@ -1,8 +1,12 @@
 import { Review } from "../../domain/entities/review.js";
-import { ReviewsRepository } from "../../domain/repositories/reviews-repository.js";
+import { ReviewsRepository, ReviewWithAuthor } from "../../domain/repositories/reviews-repository.js";
+import { Paginated, PaginationParams } from "../../domain/repositories/pagination.js";
+import { InMemoryUsersRepository } from "./in-memory-users-repository.js";
 
 export class InMemoryReviewsRepository implements ReviewsRepository {
   public items: Review[] = [];
+
+  constructor(private usersRepository?: InMemoryUsersRepository) {}
 
   async create(review: Review): Promise<Review> {
     this.items.push(review);
@@ -42,5 +46,48 @@ export class InMemoryReviewsRepository implements ReviewsRepository {
 
   async findManyByUserId(userId: string): Promise<Review[]> {
     return this.items.filter((item) => item.userId === userId);
+  }
+
+  async findManyByMoviePaginated(
+    tmdbId: string,
+    mediaType: "movie" | "tv",
+    { page, perPage }: PaginationParams
+  ): Promise<Paginated<ReviewWithAuthor>> {
+    const matching = this.items
+      .filter((item) => item.tmdbId === tmdbId && item.mediaType === mediaType)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    const start = (page - 1) * perPage;
+    const items = matching.slice(start, start + perPage).map((review) => {
+      const author = this.usersRepository?.items.find((user) => user.id === review.userId);
+
+      return {
+        id: review.id,
+        tmdbId: review.tmdbId,
+        mediaType: review.mediaType,
+        rating: review.rating,
+        content: review.content,
+        createdAt: review.createdAt,
+        updatedAt: review.updatedAt,
+        author: {
+          id: author?.id ?? review.userId,
+          username: author?.username ?? "unknown",
+          avatarUrl: author?.avatarUrl ?? null,
+        },
+      };
+    });
+
+    return { items, total: matching.length, page, perPage };
+  }
+
+  async findManyByUserIdPaginated(userId: string, { page, perPage }: PaginationParams): Promise<Paginated<Review>> {
+    const matching = this.items
+      .filter((item) => item.userId === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    const start = (page - 1) * perPage;
+    const items = matching.slice(start, start + perPage);
+
+    return { items, total: matching.length, page, perPage };
   }
 }

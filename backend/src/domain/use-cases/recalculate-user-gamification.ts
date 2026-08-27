@@ -23,6 +23,11 @@ interface BadgeRequirement {
   minUpvotes: number;
 }
 
+export function calculateReputationScore(totalReviews: number, totalUpvotes: number): number {
+  // Formula: 2 points per review + 5 points per upvote
+  return totalReviews * 2 + totalUpvotes * 5;
+}
+
 export const BADGE_RULES: BadgeRequirement[] = [
   { name: "Rookie", minScore: 0, minReviews: 1, minRecentReviews: 0, minUpvotes: 0 },
   { name: "Prestige", minScore: 5, minReviews: 3, minRecentReviews: 0, minUpvotes: 0 },
@@ -61,8 +66,8 @@ export class RecalculateUserGamificationUseCase {
     // 2. Count total upvotes received on all user reviews
     const totalUpvotes = await this.votesRepository.countVotesByReviewOwner(userId);
 
-    // 3. Calculate Reputation Score (Formula: 2 points per review + 5 points per upvote)
-    const score = totalReviews * 2 + totalUpvotes * 5;
+    // 3. Calculate Reputation Score
+    const score = calculateReputationScore(totalReviews, totalUpvotes);
 
     // 4. Determine qualified badges
     const qualifiedBadgeNames = BADGE_RULES.filter((rule) => {

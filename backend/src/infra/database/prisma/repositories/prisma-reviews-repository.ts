@@ -1,6 +1,7 @@
 import { prisma } from "../../../../shared/infra/database/prisma.js";
 import { Review } from "../../../../domain/entities/review.js";
-import { ReviewsRepository } from "../../../../domain/repositories/reviews-repository.js";
+import { ReviewsRepository, ReviewWithAuthor } from "../../../../domain/repositories/reviews-repository.js";
+import { Paginated, PaginationParams } from "../../../../domain/repositories/pagination.js";
 
 export class PrismaReviewsRepository implements ReviewsRepository {
   async create(review: Review): Promise<Review> {
@@ -128,5 +129,77 @@ export class PrismaReviewsRepository implements ReviewsRepository {
           updatedAt: review.updatedAt,
         })
     );
+  }
+
+  async findManyByMoviePaginated(
+    tmdbId: string,
+    mediaType: "movie" | "tv",
+    { page, perPage }: PaginationParams
+  ): Promise<Paginated<ReviewWithAuthor>> {
+    const where = { tmdbId, mediaType };
+
+    const [reviews, total] = await Promise.all([
+      prisma.review.findMany({
+        where,
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * perPage,
+        take: perPage,
+      }),
+      prisma.review.count({ where }),
+    ]);
+
+    return {
+      items: reviews.map((review: any) => ({
+        id: review.id,
+        tmdbId: review.tmdbId,
+        mediaType: review.mediaType as "movie" | "tv",
+        rating: review.rating,
+        content: review.content,
+        createdAt: review.createdAt,
+        updatedAt: review.updatedAt,
+        author: {
+          id: review.user.id,
+          username: review.user.username,
+          avatarUrl: review.user.avatarUrl,
+        },
+      })),
+      total,
+      page,
+      perPage,
+    };
+  }
+
+  async findManyByUserIdPaginated(userId: string, { page, perPage }: PaginationParams): Promise<Paginated<Review>> {
+    const where = { userId };
+
+    const [reviews, total] = await Promise.all([
+      prisma.review.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * perPage,
+        take: perPage,
+      }),
+      prisma.review.count({ where }),
+    ]);
+
+    return {
+      items: reviews.map(
+        (review: any) =>
+          new Review({
+            id: review.id,
+            userId: review.userId,
+            tmdbId: review.tmdbId,
+            mediaType: review.mediaType as "movie" | "tv",
+            rating: review.rating,
+            content: review.content,
+            createdAt: review.createdAt,
+            updatedAt: review.updatedAt,
+          })
+      ),
+      total,
+      page,
+      perPage,
+    };
   }
 }
