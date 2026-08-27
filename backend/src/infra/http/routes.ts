@@ -3,16 +3,24 @@ import { RegisterUserController } from "./controllers/register-user-controller.j
 import { AuthenticateUserController } from "./controllers/authenticate-user-controller.js";
 import { RegisterReviewController } from "./controllers/register-review-controller.js";
 import { VoteOnReviewController } from "./controllers/vote-on-review-controller.js";
+import { GetUserProfileController } from "./controllers/get-user-profile-controller.js";
+import { GetMovieReviewsController } from "./controllers/get-movie-reviews-controller.js";
 import { authenticate } from "./middlewares/authenticate.js";
 
 const registerUserController = new RegisterUserController();
 const authenticateUserController = new AuthenticateUserController();
 const registerReviewController = new RegisterReviewController();
 const voteOnReviewController = new VoteOnReviewController();
+const getUserProfileController = new GetUserProfileController();
+const getMovieReviewsController = new GetMovieReviewsController();
 
 export async function appRoutes(app: FastifyInstance) {
   app.post("/users", registerUserController.handle);
   app.post("/sessions", authenticateUserController.handle);
+
+  // Public routes
+  app.get("/profiles/:username", getUserProfileController.handle);
+  app.get("/movies/:tmdbId/reviews", getMovieReviewsController.handle);
 
   // Authenticated routes
   app.post("/reviews", { preHandler: [authenticate] }, registerReviewController.handle);
