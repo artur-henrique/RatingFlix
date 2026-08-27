@@ -1,10 +1,15 @@
 import "dotenv/config";
 import { fastify } from "fastify";
+import cors from "@fastify/cors";
 import { ZodError } from "zod";
 import { appRoutes } from "./infra/http/routes.js";
 
 const app = fastify({
   logger: true,
+});
+
+app.register(cors, {
+  origin: process.env.FRONTEND_URL ?? "http://localhost:3000",
 });
 
 // Register routes
