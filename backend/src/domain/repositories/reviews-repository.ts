@@ -32,4 +32,5 @@ export interface ReviewsRepository {
     params: PaginationParams
   ): Promise<Paginated<ReviewWithAuthor>>;
   findManyByUserIdPaginated(userId: string, params: PaginationParams): Promise<Paginated<Review>>;
+  findManyByAuthorsPaginated(authorIds: string[], params: PaginationParams): Promise<Paginated<ReviewWithAuthor>>;
 }
