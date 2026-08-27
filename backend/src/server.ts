@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { fastify } from "fastify";
 import { ZodError } from "zod";
 import { appRoutes } from "./infra/http/routes.js";
