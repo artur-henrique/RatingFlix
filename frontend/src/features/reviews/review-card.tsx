@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { StarRating } from "@/components/shared/star-rating";
 import type { ReviewWithAuthor } from "./types";
 
@@ -10,7 +11,9 @@ export function ReviewCard({ review, isOwner }: { review: ReviewWithAuthor; isOw
     <div className="flex flex-col gap-2 rounded-lg border p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-medium">{review.author.username}</span>
+          <Link href={`/profiles/${review.author.username}`} className="font-medium hover:underline">
+            {review.author.username}
+          </Link>
           {isOwner && (
             <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
               Sua crítica
