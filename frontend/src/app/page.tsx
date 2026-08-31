@@ -13,6 +13,7 @@ export default function Page() {
       <p className="max-w-md text-muted-foreground">
         Avalie, descubra e discuta filmes e séries com outros críticos.
       </p>
+      <Button render={<Link href="/search">Buscar filmes e séries</Link>} nativeButton={false} />
       {status === "authenticated" ? (
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground">Olá, {user?.username}</span>
