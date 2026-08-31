@@ -1,6 +1,6 @@
 import { prisma } from "../../../../shared/infra/database/prisma.js";
 import { Vote } from "../../../../domain/entities/vote.js";
-import { VotesRepository } from "../../../../domain/repositories/votes-repository.js";
+import { ReviewVoteSummary, VotesRepository } from "../../../../domain/repositories/votes-repository.js";
 
 export class PrismaVotesRepository implements VotesRepository {
   async create(vote: Vote): Promise<Vote> {
@@ -55,5 +55,41 @@ export class PrismaVotesRepository implements VotesRepository {
     });
 
     return count;
+  }
+
+  async countAndUserVoteByReviewIds(
+    reviewIds: string[],
+    userId?: string
+  ): Promise<Map<string, ReviewVoteSummary>> {
+    const result = new Map<string, ReviewVoteSummary>();
+    if (reviewIds.length === 0) {
+      return result;
+    }
+
+    for (const reviewId of reviewIds) {
+      result.set(reviewId, { upvotes: 0, downvotes: 0, myVote: null });
+    }
+
+    const votes = await prisma.vote.findMany({
+      where: { reviewId: { in: reviewIds } },
+      select: { reviewId: true, userId: true, type: true },
+    });
+
+    for (const vote of votes) {
+      const summary = result.get(vote.reviewId);
+      if (!summary) continue;
+
+      if (vote.type === "upvote") {
+        summary.upvotes += 1;
+      } else if (vote.type === "downvote") {
+        summary.downvotes += 1;
+      }
+
+      if (userId && vote.userId === userId) {
+        summary.myVote = vote.type as "upvote" | "downvote";
+      }
+    }
+
+    return result;
   }
 }

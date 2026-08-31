@@ -5,6 +5,7 @@ import { InMemoryReviewsRepository } from "../../test/repositories/in-memory-rev
 import { InMemoryVotesRepository } from "../../test/repositories/in-memory-votes-repository.js";
 import { InMemoryBadgesRepository } from "../../test/repositories/in-memory-badges-repository.js";
 import { InMemoryUserBadgesRepository } from "../../test/repositories/in-memory-user-badges-repository.js";
+import { InMemoryFollowsRepository } from "../../test/repositories/in-memory-follows-repository.js";
 import { User } from "../entities/user.js";
 import { Review } from "../entities/review.js";
 import { Vote } from "../entities/vote.js";
@@ -16,6 +17,7 @@ let reviewsRepository: InMemoryReviewsRepository;
 let votesRepository: InMemoryVotesRepository;
 let badgesRepository: InMemoryBadgesRepository;
 let userBadgesRepository: InMemoryUserBadgesRepository;
+let followsRepository: InMemoryFollowsRepository;
 let sut: GetUserProfileUseCase;
 
 describe("Get User Profile Use Case", () => {
@@ -25,7 +27,14 @@ describe("Get User Profile Use Case", () => {
     votesRepository = new InMemoryVotesRepository(reviewsRepository);
     badgesRepository = new InMemoryBadgesRepository();
     userBadgesRepository = new InMemoryUserBadgesRepository(badgesRepository);
-    sut = new GetUserProfileUseCase(usersRepository, reviewsRepository, votesRepository, userBadgesRepository);
+    followsRepository = new InMemoryFollowsRepository();
+    sut = new GetUserProfileUseCase(
+      usersRepository,
+      reviewsRepository,
+      votesRepository,
+      userBadgesRepository,
+      followsRepository
+    );
   });
 
   it("should throw when the username does not exist", async () => {
@@ -59,5 +68,23 @@ describe("Get User Profile Use Case", () => {
     expect(result.profile.badges.map((b) => b.name)).toContain("Rookie");
     expect(result.reviews.total).toBe(3);
     expect(result.reviews.items).toHaveLength(2); // perPage = 2
+  });
+
+  it("should report isFollowing based on who is asking", async () => {
+    const user = await usersRepository.create(
+      new User({ username: "artur", email: "artur@example.com", passwordHash: "hash" })
+    );
+    const follower = await usersRepository.create(
+      new User({ username: "maria", email: "maria@example.com", passwordHash: "hash" })
+    );
+    await followsRepository.follow(follower.id, user.id);
+
+    const anonymous = await sut.execute({ username: "artur", page: 1, perPage: 10 });
+    const asFollower = await sut.execute({ username: "artur", page: 1, perPage: 10, requesterId: follower.id });
+    const asSelf = await sut.execute({ username: "artur", page: 1, perPage: 10, requesterId: user.id });
+
+    expect(anonymous.profile.isFollowing).toBeNull();
+    expect(asFollower.profile.isFollowing).toBe(true);
+    expect(asSelf.profile.isFollowing).toBe(false);
   });
 });

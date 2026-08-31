@@ -12,6 +12,7 @@ import { GetUserFeedController } from "./controllers/get-user-feed-controller.js
 import { UpdateReviewController } from "./controllers/update-review-controller.js";
 import { DeleteReviewController } from "./controllers/delete-review-controller.js";
 import { authenticate } from "./middlewares/authenticate.js";
+import { authenticateOptional } from "./middlewares/authenticate-optional.js";
 
 const registerUserController = new RegisterUserController();
 const authenticateUserController = new AuthenticateUserController();
@@ -30,9 +31,14 @@ export async function appRoutes(app: FastifyInstance) {
   app.post("/users", registerUserController.handle);
   app.post("/sessions", authenticateUserController.handle);
 
-  // Public routes
-  app.get("/profiles/:username", getUserProfileController.handle);
-  app.get("/movies/:tmdbId/reviews", getMovieReviewsController.handle);
+  // Public routes (authentication optional: logged-in requests get extra
+  // fields like isFollowing / votes.myVote, anonymous requests still work)
+  app.get("/profiles/:username", { preHandler: [authenticateOptional] }, getUserProfileController.handle);
+  app.get(
+    "/movies/:tmdbId/reviews",
+    { preHandler: [authenticateOptional] },
+    getMovieReviewsController.handle
+  );
   
   // TMDB External API Catalog routes
   app.get("/movies/search", searchMoviesController.handle);
