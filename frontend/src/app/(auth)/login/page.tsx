@@ -48,37 +48,42 @@ export default function LoginPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Entrar</CardTitle>
-        <CardDescription>Acesse sua conta do RatingFlix.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" {...register("email")} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input id="password" type="password" {...register("password")} />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
-          {formError && <p className="text-sm text-destructive">{formError}</p>}
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Entrando..." : "Entrar"}
-          </Button>
-        </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Não tem conta?{" "}
-          <Link href="/register" className="underline underline-offset-4">
-            Criar conta
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+    <>
+      {/* CardTitle renderiza uma <div>, não um heading real — sem isso a
+          página não tem nenhum <h1> pra leitor de tela ou SEO. */}
+      <h1 className="sr-only">Entrar</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>Entrar</CardTitle>
+          <CardDescription>Acesse sua conta do RatingFlix.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email">E-mail</Label>
+              <Input id="email" type="email" {...register("email")} />
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input id="password" type="password" {...register("password")} />
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password.message}</p>
+              )}
+            </div>
+            {formError && <p className="text-sm text-destructive">{formError}</p>}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Não tem conta?{" "}
+            <Link href="/register" className="underline underline-offset-4">
+              Criar conta
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </>
   );
 }

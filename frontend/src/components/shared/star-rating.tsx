@@ -31,6 +31,7 @@ export function StarRating({ value, onChange, size = 20 }: StarRatingProps) {
             type="button"
             onClick={() => onChange(star)}
             aria-label={`${star} estrela${star > 1 ? "s" : ""}`}
+            className="rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {icon}
           </button>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/components/shared/query-provider";
+import { SiteHeader } from "@/components/shared/site-header";
 import { AuthProvider } from "@/features/auth/auth-context";
 import "./globals.css";
 
@@ -27,7 +28,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <SiteHeader />
+            {children}
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

@@ -63,7 +63,7 @@ export function VoteButtons({ reviewId, votes: initialVotes, canVote }: VoteButt
         disabled={mutation.isPending}
         onClick={() => mutation.mutate("upvote")}
         className={cn(
-          "flex items-center gap-1 text-muted-foreground hover:text-foreground",
+          "flex items-center gap-1 rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
           votes.myVote === "upvote" && "font-medium text-primary hover:text-primary"
         )}
         aria-pressed={votes.myVote === "upvote"}
@@ -76,7 +76,7 @@ export function VoteButtons({ reviewId, votes: initialVotes, canVote }: VoteButt
         disabled={mutation.isPending}
         onClick={() => mutation.mutate("downvote")}
         className={cn(
-          "flex items-center gap-1 text-muted-foreground hover:text-foreground",
+          "flex items-center gap-1 rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
           votes.myVote === "downvote" && "font-medium text-destructive hover:text-destructive"
         )}
         aria-pressed={votes.myVote === "downvote"}
