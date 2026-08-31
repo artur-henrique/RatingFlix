@@ -10,6 +10,10 @@ const app = fastify({
 
 app.register(cors, {
   origin: process.env.FRONTEND_URL ?? "http://localhost:3000",
+  // @fastify/cors só libera GET,HEAD,POST por padrão. As rotas de update/delete
+  // (PUT /reviews/:id, DELETE /reviews/:id) precisam ser listadas explicitamente,
+  // senão o navegador bloqueia no preflight antes mesmo de a requisição sair.
+  methods: ["GET", "POST", "PUT", "DELETE"],
 });
 
 // Register routes
