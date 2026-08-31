@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getMovieDetails } from "@/features/catalog/api";
 import { ApiError } from "@/lib/api-client";
 import type { MediaType } from "@/features/catalog/types";
+import { ReviewsSection } from "@/features/reviews/reviews-section";
 
 interface MovieDetailsPageProps {
   params: Promise<{ mediaType: string; id: string }>;
@@ -52,6 +53,8 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
           <p>{movie.overview || "Sem sinopse disponível."}</p>
         </div>
       </div>
+
+      <ReviewsSection tmdbId={movie.id} mediaType={mediaType as MediaType} />
     </main>
   );
 }
