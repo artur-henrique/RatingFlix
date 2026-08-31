@@ -28,7 +28,10 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
   const response = await fetch(`${API_URL}${path}`, {
     ...rest,
     headers: {
-      "Content-Type": "application/json",
+      // Só manda Content-Type quando há corpo de fato — com um corpo vazio
+      // (ex: DELETE), o Fastify tenta fazer parse de JSON vazio e quebra
+      // com FST_ERR_CTP_EMPTY_JSON_BODY.
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
