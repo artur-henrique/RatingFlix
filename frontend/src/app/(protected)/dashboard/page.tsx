@@ -10,17 +10,16 @@ export default function DashboardPage() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
       <h1 className="text-2xl font-semibold">Olá, {user?.username}</h1>
-      <p className="text-muted-foreground">
-        Área autenticada — o feed de reviews chega na Etapa 6.
-      </p>
       <div className="flex items-center gap-3">
+        <Button render={<Link href="/feed">Feed</Link>} nativeButton={false} />
         {user && (
           <Button
+            variant="outline"
             render={<Link href={`/profiles/${user.username}`}>Meu perfil</Link>}
             nativeButton={false}
           />
         )}
-        <Button variant="outline" onClick={logout}>
+        <Button variant="ghost" onClick={logout}>
           Sair
         </Button>
       </div>
