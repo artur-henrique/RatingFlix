@@ -17,7 +17,11 @@ export function StarRating({ value, onChange, size = 20 }: StarRatingProps) {
         const icon = (
           <Star
             size={size}
-            className={cn(filled ? "fill-primary text-primary" : "fill-transparent text-muted-foreground")}
+            className={cn(
+              filled
+                ? "fill-[url(#star-gold-gradient)] text-amber-600"
+                : "fill-transparent text-muted-foreground"
+            )}
           />
         );
 
