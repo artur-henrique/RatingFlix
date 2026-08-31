@@ -1,4 +1,7 @@
 import type { MediaType } from "@/features/catalog/types";
+import type { Paginated } from "@/lib/types";
+
+export type { Paginated };
 
 export interface ReviewAuthor {
   id: string;
@@ -26,13 +29,6 @@ export interface ReviewWithAuthor {
   createdAt: string;
   updatedAt: string;
   author: ReviewAuthor;
-}
-
-export interface Paginated<T> {
-  items: T[];
-  total: number;
-  page: number;
-  perPage: number;
 }
 
 export interface CreateReviewPayload {

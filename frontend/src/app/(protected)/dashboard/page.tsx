@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/features/auth/auth-context";
 import { Button } from "@/components/ui/button";
 
@@ -12,9 +13,17 @@ export default function DashboardPage() {
       <p className="text-muted-foreground">
         Área autenticada — o feed de reviews chega na Etapa 6.
       </p>
-      <Button variant="outline" onClick={logout}>
-        Sair
-      </Button>
+      <div className="flex items-center gap-3">
+        {user && (
+          <Button
+            render={<Link href={`/profiles/${user.username}`}>Meu perfil</Link>}
+            nativeButton={false}
+          />
+        )}
+        <Button variant="outline" onClick={logout}>
+          Sair
+        </Button>
+      </div>
     </main>
   );
 }
