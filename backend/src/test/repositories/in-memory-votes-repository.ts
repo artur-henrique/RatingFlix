@@ -1,5 +1,5 @@
 import { Vote } from "../../domain/entities/vote.js";
-import { VotesRepository } from "../../domain/repositories/votes-repository.js";
+import { ReviewVoteSummary, VotesRepository } from "../../domain/repositories/votes-repository.js";
 import { InMemoryReviewsRepository } from "./in-memory-reviews-repository.js";
 
 export class InMemoryVotesRepository implements VotesRepository {
@@ -36,5 +36,32 @@ export class InMemoryVotesRepository implements VotesRepository {
 
     // Count upvotes on these reviews
     return this.items.filter((vote) => userReviewIds.includes(vote.reviewId) && vote.type === "upvote").length;
+  }
+
+  async countAndUserVoteByReviewIds(
+    reviewIds: string[],
+    userId?: string
+  ): Promise<Map<string, ReviewVoteSummary>> {
+    const result = new Map<string, ReviewVoteSummary>();
+    for (const reviewId of reviewIds) {
+      result.set(reviewId, { upvotes: 0, downvotes: 0, myVote: null });
+    }
+
+    for (const vote of this.items) {
+      const summary = result.get(vote.reviewId);
+      if (!summary) continue;
+
+      if (vote.type === "upvote") {
+        summary.upvotes += 1;
+      } else if (vote.type === "downvote") {
+        summary.downvotes += 1;
+      }
+
+      if (userId && vote.userId === userId) {
+        summary.myVote = vote.type;
+      }
+    }
+
+    return result;
   }
 }

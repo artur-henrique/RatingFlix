@@ -1,5 +1,6 @@
 import { Review } from "../entities/review.js";
 import { Paginated, PaginationParams } from "./pagination.js";
+import { ReviewVoteSummary } from "./votes-repository.js";
 
 export interface ReviewAuthor {
   id: string;
@@ -16,6 +17,13 @@ export interface ReviewWithAuthor {
   createdAt: Date;
   updatedAt: Date;
   author: ReviewAuthor;
+}
+
+// Usado pelos use cases que também enriquecem a review com votos
+// (GetMovieReviewsUseCase, GetUserFeedUseCase) — o repositório de reviews
+// não conhece votos, então isso não vive em ReviewWithAuthor diretamente.
+export interface ReviewWithAuthorAndVotes extends ReviewWithAuthor {
+  votes: ReviewVoteSummary;
 }
 
 export interface ReviewsRepository {

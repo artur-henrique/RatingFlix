@@ -3,12 +3,14 @@ import { GetUserFeedUseCase } from "./get-user-feed.js";
 import { InMemoryFollowsRepository } from "../../test/repositories/in-memory-follows-repository.js";
 import { InMemoryReviewsRepository } from "../../test/repositories/in-memory-reviews-repository.js";
 import { InMemoryUsersRepository } from "../../test/repositories/in-memory-users-repository.js";
+import { InMemoryVotesRepository } from "../../test/repositories/in-memory-votes-repository.js";
 import { User } from "../entities/user.js";
 import { Review } from "../entities/review.js";
 
 let followsRepository: InMemoryFollowsRepository;
 let reviewsRepository: InMemoryReviewsRepository;
 let usersRepository: InMemoryUsersRepository;
+let votesRepository: InMemoryVotesRepository;
 let sut: GetUserFeedUseCase;
 
 describe("Get User Feed Use Case", () => {
@@ -16,7 +18,8 @@ describe("Get User Feed Use Case", () => {
     followsRepository = new InMemoryFollowsRepository();
     usersRepository = new InMemoryUsersRepository();
     reviewsRepository = new InMemoryReviewsRepository(usersRepository);
-    sut = new GetUserFeedUseCase(followsRepository, reviewsRepository);
+    votesRepository = new InMemoryVotesRepository(reviewsRepository);
+    sut = new GetUserFeedUseCase(followsRepository, reviewsRepository, votesRepository);
   });
 
   it("should return an empty feed when the user follows no one", async () => {

@@ -3,6 +3,7 @@ import { PrismaUsersRepository } from "../../database/prisma/repositories/prisma
 import { PrismaReviewsRepository } from "../../database/prisma/repositories/prisma-reviews-repository.js";
 import { PrismaVotesRepository } from "../../database/prisma/repositories/prisma-votes-repository.js";
 import { PrismaUserBadgesRepository } from "../../database/prisma/repositories/prisma-user-badges-repository.js";
+import { PrismaFollowsRepository } from "../../database/prisma/repositories/prisma-follows-repository.js";
 import { GetUserProfileUseCase } from "../../../domain/use-cases/get-user-profile.js";
 import { UserNotFoundError } from "../../../domain/errors/user-not-found-error.js";
 
@@ -10,21 +11,29 @@ export class GetUserProfileController {
   async handle(request: FastifyRequest, reply: FastifyReply) {
     const { username } = request.params as any;
     const { page, perPage } = request.query as any;
+    const requesterId = (request as any).user?.id;
 
     const usersRepository = new PrismaUsersRepository();
     const reviewsRepository = new PrismaReviewsRepository();
     const votesRepository = new PrismaVotesRepository();
     const userBadgesRepository = new PrismaUserBadgesRepository();
+    const followsRepository = new PrismaFollowsRepository();
 
     const getUserProfileUseCase = new GetUserProfileUseCase(
       usersRepository,
       reviewsRepository,
       votesRepository,
-      userBadgesRepository
+      userBadgesRepository,
+      followsRepository
     );
 
     try {
-      const { profile, reviews } = await getUserProfileUseCase.execute({ username, page, perPage });
+      const { profile, reviews } = await getUserProfileUseCase.execute({
+        username,
+        page,
+        perPage,
+        requesterId,
+      });
 
       return reply.status(200).send({
         profile: {
@@ -33,6 +42,7 @@ export class GetUserProfileController {
           avatarUrl: profile.avatarUrl,
           createdAt: profile.createdAt,
           score: profile.score,
+          isFollowing: profile.isFollowing,
           badges: profile.badges.map((badge) => ({
             id: badge.id,
             name: badge.name,

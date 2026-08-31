@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { FollowsRepository } from "../repositories/follows-repository.js";
-import { ReviewsRepository, ReviewWithAuthor } from "../repositories/reviews-repository.js";
+import { ReviewsRepository, ReviewWithAuthorAndVotes } from "../repositories/reviews-repository.js";
+import { VotesRepository } from "../repositories/votes-repository.js";
 import { Paginated } from "../repositories/pagination.js";
 
 const getUserFeedSchema = z.object({
@@ -12,13 +13,14 @@ const getUserFeedSchema = z.object({
 type GetUserFeedRequest = z.infer<typeof getUserFeedSchema>;
 
 interface GetUserFeedResponse {
-  reviews: Paginated<ReviewWithAuthor>;
+  reviews: Paginated<ReviewWithAuthorAndVotes>;
 }
 
 export class GetUserFeedUseCase {
   constructor(
     private followsRepository: FollowsRepository,
-    private reviewsRepository: ReviewsRepository
+    private reviewsRepository: ReviewsRepository,
+    private votesRepository: VotesRepository
   ) {}
 
   async execute(request: GetUserFeedRequest): Promise<GetUserFeedResponse> {
@@ -32,6 +34,19 @@ export class GetUserFeedUseCase {
 
     const reviews = await this.reviewsRepository.findManyByAuthorsPaginated(followingIds, { page, perPage });
 
-    return { reviews };
+    const voteSummaries = await this.votesRepository.countAndUserVoteByReviewIds(
+      reviews.items.map((review) => review.id),
+      userId
+    );
+
+    return {
+      reviews: {
+        ...reviews,
+        items: reviews.items.map((review) => ({
+          ...review,
+          votes: voteSummaries.get(review.id) ?? { upvotes: 0, downvotes: 0, myVote: null },
+        })),
+      },
+    };
   }
 }
