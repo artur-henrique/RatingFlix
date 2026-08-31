@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/features/auth/auth-context";
 import { Button } from "@/components/ui/button";
+import { QueryErrorNotice } from "@/components/shared/query-error-notice";
 import type { MediaType } from "@/features/catalog/types";
 import { getMovieReviews } from "./api";
 import { ReviewCard } from "./review-card";
@@ -70,6 +71,8 @@ export function ReviewsSection({ tmdbId, mediaType }: ReviewsSectionProps) {
       )}
 
       {listQuery.isLoading && <p className="text-muted-foreground">Carregando críticas...</p>}
+
+      {listQuery.isError && <QueryErrorNotice onRetry={() => listQuery.refetch()} />}
 
       {reviews && reviews.items.length === 0 && (
         <p className="text-muted-foreground">Ainda não há críticas para este título.</p>

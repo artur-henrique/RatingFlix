@@ -6,12 +6,13 @@ import { useAuth } from "@/features/auth/auth-context";
 import { getFeed } from "@/features/social/api";
 import { ReviewCard } from "@/features/reviews/review-card";
 import { Button } from "@/components/ui/button";
+import { QueryErrorNotice } from "@/components/shared/query-error-notice";
 
 export default function FeedPage() {
   const { user, token } = useAuth();
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["feed", page],
     queryFn: () => getFeed(page, token as string),
     enabled: !!token,
@@ -25,6 +26,8 @@ export default function FeedPage() {
       <h1 className="text-2xl font-semibold">Feed</h1>
 
       {isLoading && <p className="text-muted-foreground">Carregando...</p>}
+
+      {isError && <QueryErrorNotice onRetry={() => refetch()} />}
 
       {reviews && reviews.items.length === 0 && (
         <p className="text-muted-foreground">

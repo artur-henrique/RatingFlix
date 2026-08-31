@@ -57,44 +57,47 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Criar conta</CardTitle>
-        <CardDescription>Comece a avaliar filmes e séries no RatingFlix.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="username">Usuário</Label>
-            <Input id="username" {...register("username")} />
-            {errors.username && (
-              <p className="text-sm text-destructive">{errors.username.message}</p>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" {...register("email")} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input id="password" type="password" {...register("password")} />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
-          {formError && <p className="text-sm text-destructive">{formError}</p>}
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Criando..." : "Criar conta"}
-          </Button>
-        </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Já tem conta?{" "}
-          <Link href="/login" className="underline underline-offset-4">
-            Entrar
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+    <>
+      <h1 className="sr-only">Criar conta</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>Criar conta</CardTitle>
+          <CardDescription>Comece a avaliar filmes e séries no RatingFlix.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="username">Usuário</Label>
+              <Input id="username" {...register("username")} />
+              {errors.username && (
+                <p className="text-sm text-destructive">{errors.username.message}</p>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email">E-mail</Label>
+              <Input id="email" type="email" {...register("email")} />
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input id="password" type="password" {...register("password")} />
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password.message}</p>
+              )}
+            </div>
+            {formError && <p className="text-sm text-destructive">{formError}</p>}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Criando..." : "Criar conta"}
+            </Button>
+          </form>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Já tem conta?{" "}
+            <Link href="/login" className="underline underline-offset-4">
+              Entrar
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </>
   );
 }
