@@ -1,4 +1,16 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Fora do Docker, o mesmo endereço serve pros dois lados (backend e frontend
+// rodam ambos em "localhost", só em portas diferentes). Dentro do Docker
+// Compose, isso deixa de ser verdade: código rodando no servidor (Server
+// Components, dentro do container do frontend) precisa do nome do serviço
+// (`http://backend:3333`, resolvido pela rede interna do Compose), enquanto
+// código rodando no navegador do usuário (fora de qualquer container)
+// continua precisando de `http://localhost:3333` (a porta publicada pro
+// host). API_URL_INTERNAL só existe como variável de ambiente dentro do
+// container do frontend; fora do Docker, cai no mesmo valor de sempre.
+const API_URL =
+  typeof window === "undefined"
+    ? (process.env.API_URL_INTERNAL ?? process.env.NEXT_PUBLIC_API_URL)
+    : process.env.NEXT_PUBLIC_API_URL;
 
 export class ApiError extends Error {
   status: number;
