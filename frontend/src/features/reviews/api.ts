@@ -30,3 +30,11 @@ export function updateReview(reviewId: string, payload: UpdateReviewPayload, tok
 export function deleteReview(reviewId: string, token: string) {
   return apiFetch<void>(`/reviews/${reviewId}`, { method: "DELETE", token });
 }
+
+export function voteOnReview(reviewId: string, type: "upvote" | "downvote", token: string) {
+  return apiFetch<{ voted: boolean; type: "upvote" | "downvote" | null }>(`/reviews/${reviewId}/votes`, {
+    method: "POST",
+    body: { type },
+    token,
+  });
+}

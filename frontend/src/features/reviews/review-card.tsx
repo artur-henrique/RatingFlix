@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { StarRating } from "@/components/shared/star-rating";
+import { useAuth } from "@/features/auth/auth-context";
+import { VoteButtons } from "./vote-buttons";
 import type { ReviewWithAuthor } from "./types";
 
 function formatDate(iso: string) {
@@ -7,6 +11,9 @@ function formatDate(iso: string) {
 }
 
 export function ReviewCard({ review, isOwner }: { review: ReviewWithAuthor; isOwner: boolean }) {
+  const { status } = useAuth();
+  const canVote = status === "authenticated" && !isOwner;
+
   return (
     <div className="flex flex-col gap-2 rounded-lg border p-4">
       <div className="flex items-center justify-between">
@@ -24,6 +31,7 @@ export function ReviewCard({ review, isOwner }: { review: ReviewWithAuthor; isOw
       </div>
       <StarRating value={review.rating} />
       {review.content && <p className="text-sm">{review.content}</p>}
+      <VoteButtons reviewId={review.id} votes={review.votes} canVote={canVote} />
     </div>
   );
 }
