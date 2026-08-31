@@ -26,6 +26,9 @@ export interface Profile {
   createdAt: string;
   score: number;
   badges: Badge[];
+  // null = ninguém autenticado pediu o perfil (a chamada SSR nunca manda
+  // token — ver FollowButton para como o estado real é obtido no cliente)
+  isFollowing: boolean | null;
 }
 
 export interface ProfileResponse {

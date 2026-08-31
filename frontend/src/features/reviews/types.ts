@@ -20,6 +20,12 @@ export interface Review {
   updatedAt: string;
 }
 
+export interface ReviewVotes {
+  upvotes: number;
+  downvotes: number;
+  myVote: "upvote" | "downvote" | null;
+}
+
 export interface ReviewWithAuthor {
   id: string;
   tmdbId: string;
@@ -29,6 +35,9 @@ export interface ReviewWithAuthor {
   createdAt: string;
   updatedAt: string;
   author: ReviewAuthor;
+  // Presente desde a preparação de backend da Etapa 6; consumido de verdade
+  // só na Etapa 7 (votos).
+  votes: ReviewVotes;
 }
 
 export interface CreateReviewPayload {

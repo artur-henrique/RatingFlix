@@ -4,6 +4,7 @@ import { getUserProfile } from "@/features/profile/api";
 import { getMovieDetails } from "@/features/catalog/api";
 import { ApiError } from "@/lib/api-client";
 import { ProfileReviewItem } from "@/features/profile/profile-review-item";
+import { FollowButton } from "@/features/social/follow-button";
 import { Button } from "@/components/ui/button";
 
 interface ProfilePageProps {
@@ -37,9 +38,12 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-8">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold">{profile.username}</h1>
-        <p className="text-sm text-muted-foreground">Score de reputação: {profile.score}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-semibold">{profile.username}</h1>
+          <p className="text-sm text-muted-foreground">Score de reputação: {profile.score}</p>
+        </div>
+        <FollowButton profileUserId={profile.id} profileUsername={profile.username} />
       </div>
 
       {profile.badges.length > 0 && (
