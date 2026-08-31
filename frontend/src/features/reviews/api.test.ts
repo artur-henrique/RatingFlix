@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api-client";
-import { createReview, deleteReview, getMovieReviews, updateReview } from "./api";
+import { createReview, deleteReview, getMovieReviews, updateReview, voteOnReview } from "./api";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -94,5 +94,39 @@ describe("deleteReview", () => {
     expect(result).toBeUndefined();
     const [, options] = fetchMock.mock.calls[0];
     expect(options.method).toBe("DELETE");
+  });
+});
+
+describe("voteOnReview", () => {
+  it("posts the vote type and returns the toggle result", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ voted: true, type: "upvote" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await voteOnReview("r1", "upvote", "fake-token");
+
+    expect(result).toEqual({ voted: true, type: "upvote" });
+    const [url, options] = fetchMock.mock.calls[0];
+    expect(url).toContain("/reviews/r1/votes");
+    expect(options.method).toBe("POST");
+    expect(JSON.parse(options.body)).toEqual({ type: "upvote" });
+  });
+
+  it("throws ApiError 400 when voting on your own review", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ message: "You cannot vote on your own review." }), { status: 400 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      await voteOnReview("r1", "upvote", "fake-token");
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(ApiError);
+      expect((err as ApiError).status).toBe(400);
+    }
   });
 });
