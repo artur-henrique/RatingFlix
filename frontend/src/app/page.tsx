@@ -8,8 +8,8 @@ export default function Page() {
   const { user, status } = useAuth();
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-      <h1 className="text-3xl font-semibold tracking-tight">RatingFlix</h1>
+    <main className="flex flex-1 flex-col items-center gap-4 p-8 pt-20 text-center sm:pt-32">
+      <h1 className="text-6xl font-semibold tracking-tight sm:text-7xl">RatingFlix</h1>
       <p className="max-w-md text-muted-foreground">
         {status === "authenticated"
           ? `Olá, ${user?.username}. O que você quer avaliar hoje?`
