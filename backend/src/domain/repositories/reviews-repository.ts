@@ -14,6 +14,8 @@ export interface ReviewWithAuthor {
   mediaType: "movie" | "tv";
   rating: number;
   content: string | null;
+  movieTitle: string | null;
+  moviePosterPath: string | null;
   createdAt: Date;
   updatedAt: Date;
   author: ReviewAuthor;

@@ -16,6 +16,8 @@ export interface Review {
   mediaType: MediaType;
   rating: number;
   content: string | null;
+  movieTitle: string | null;
+  moviePosterPath: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,6 +34,12 @@ export interface ReviewWithAuthor {
   mediaType: MediaType;
   rating: number;
   content: string | null;
+  // Snapshot do filme/série resolvido pelo backend na criação da review
+  // (Etapa 9) — sempre presente, mas só é exibido nos contextos onde o
+  // filme não é óbvio pelo resto da tela (ex.: feed), via `showMovie` no
+  // `ReviewCard`.
+  movieTitle: string | null;
+  moviePosterPath: string | null;
   createdAt: string;
   updatedAt: string;
   author: ReviewAuthor;

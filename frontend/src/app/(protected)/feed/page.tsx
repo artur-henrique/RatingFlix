@@ -38,7 +38,7 @@ export default function FeedPage() {
       {reviews && reviews.items.length > 0 && (
         <div className="flex flex-col gap-4">
           {reviews.items.map((review) => (
-            <ReviewCard key={review.id} review={review} isOwner={review.author.id === user?.id} />
+            <ReviewCard key={review.id} review={review} isOwner={review.author.id === user?.id} showMovie />
           ))}
         </div>
       )}

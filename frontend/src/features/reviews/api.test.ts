@@ -13,6 +13,8 @@ const mockReview = {
   mediaType: "movie" as const,
   rating: 5,
   content: "Ótimo filme",
+  movieTitle: "Matrix",
+  moviePosterPath: "https://image.tmdb.org/t/p/w500/poster.jpg",
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
