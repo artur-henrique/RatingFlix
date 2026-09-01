@@ -14,12 +14,6 @@ export function SiteHeader() {
           RatingFlix
         </Link>
         <nav className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            render={<Link href="/search">Buscar</Link>}
-            nativeButton={false}
-          />
           {status === "authenticated" && (
             <>
               <Button
