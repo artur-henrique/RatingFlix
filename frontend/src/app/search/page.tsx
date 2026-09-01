@@ -26,8 +26,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           defaultValue={trimmedQuery}
           placeholder="Nome do filme ou série"
           aria-label="Buscar filmes e séries"
+          className="h-11"
         />
-        <Button type="submit">Buscar</Button>
+        <Button type="submit" className="h-11">
+          Buscar
+        </Button>
       </form>
 
       {!trimmedQuery && <p className="text-muted-foreground">Digite algo para buscar.</p>}
