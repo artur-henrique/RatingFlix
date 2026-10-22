@@ -7,6 +7,9 @@ export interface ReviewProps {
   mediaType: "movie" | "tv";
   rating: number; // 1 to 5
   content?: string | null;
+  // Snapshot do filme/série, resolvido uma vez na criação da review.
+  movieTitle?: string | null;
+  moviePosterPath?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -26,6 +29,8 @@ export class Review {
       mediaType: props.mediaType,
       rating: props.rating,
       content: props.content ?? null,
+      movieTitle: props.movieTitle ?? null,
+      moviePosterPath: props.moviePosterPath ?? null,
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? new Date(),
     };
@@ -53,6 +58,14 @@ export class Review {
 
   get content() {
     return this.props.content;
+  }
+
+  get movieTitle() {
+    return this.props.movieTitle;
+  }
+
+  get moviePosterPath() {
+    return this.props.moviePosterPath;
   }
 
   get createdAt() {

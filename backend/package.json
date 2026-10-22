@@ -12,7 +12,8 @@
     "build": "node ./node_modules/typescript/lib/tsc.js",
     "start": "node dist/server.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "backfill:review-movie-snapshot": "tsx scripts/backfill-review-movie-snapshot.ts"
   },
   "keywords": [],
   "author": "",

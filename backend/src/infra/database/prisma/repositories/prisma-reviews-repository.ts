@@ -13,6 +13,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
         mediaType: review.mediaType,
         rating: review.rating,
         content: review.content,
+        movieTitle: review.movieTitle,
+        moviePosterPath: review.moviePosterPath,
         createdAt: review.createdAt,
         updatedAt: review.updatedAt,
       },
@@ -56,6 +58,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
       mediaType: review.mediaType as "movie" | "tv",
       rating: review.rating,
       content: review.content,
+      movieTitle: review.movieTitle,
+      moviePosterPath: review.moviePosterPath,
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
     });
@@ -81,6 +85,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
       mediaType: review.mediaType as "movie" | "tv",
       rating: review.rating,
       content: review.content,
+      movieTitle: review.movieTitle,
+      moviePosterPath: review.moviePosterPath,
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
     });
@@ -103,6 +109,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
           mediaType: review.mediaType as "movie" | "tv",
           rating: review.rating,
           content: review.content,
+          movieTitle: review.movieTitle,
+          moviePosterPath: review.moviePosterPath,
           createdAt: review.createdAt,
           updatedAt: review.updatedAt,
         })
@@ -125,6 +133,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
           mediaType: review.mediaType as "movie" | "tv",
           rating: review.rating,
           content: review.content,
+          movieTitle: review.movieTitle,
+          moviePosterPath: review.moviePosterPath,
           createdAt: review.createdAt,
           updatedAt: review.updatedAt,
         })
@@ -156,6 +166,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
         mediaType: review.mediaType as "movie" | "tv",
         rating: review.rating,
         content: review.content,
+        movieTitle: review.movieTitle,
+        moviePosterPath: review.moviePosterPath,
         createdAt: review.createdAt,
         updatedAt: review.updatedAt,
         author: {
@@ -194,6 +206,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
         mediaType: review.mediaType as "movie" | "tv",
         rating: review.rating,
         content: review.content,
+        movieTitle: review.movieTitle,
+        moviePosterPath: review.moviePosterPath,
         createdAt: review.createdAt,
         updatedAt: review.updatedAt,
         author: {
@@ -231,6 +245,8 @@ export class PrismaReviewsRepository implements ReviewsRepository {
             mediaType: review.mediaType as "movie" | "tv",
             rating: review.rating,
             content: review.content,
+            movieTitle: review.movieTitle,
+            moviePosterPath: review.moviePosterPath,
             createdAt: review.createdAt,
             updatedAt: review.updatedAt,
           })

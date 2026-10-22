@@ -8,13 +8,13 @@ export default function Page() {
   const { user, status } = useAuth();
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-12 p-8 text-center">
+    <main className="flex flex-1 flex-col items-center justify-start gap-12 p-8 pt-24 text-center sm:pt-32 md:pt-40">
       {/* Grid de uma coluna só: sem largura própria definida, a coluna se
           ajusta ao filho mais largo (o h1). Com o alinhamento padrão do
           grid (stretch), o formulário de busca "estica" pra ocupar essa
           mesma largura — fica com exatamente o width do título, sem medir
           nada via JS. */}
-      <div className="grid gap-8">
+      <div className="grid gap-12">
         <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl md:text-7xl">
           RatingFlix
         </h1>

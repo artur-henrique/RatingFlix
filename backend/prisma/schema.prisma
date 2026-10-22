@@ -28,14 +28,19 @@ model User {
 }
 
 model Review {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  tmdbId    String   @map("tmdb_id")
-  mediaType String   @map("media_type")
-  rating    Int
-  content   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  tmdbId          String   @map("tmdb_id")
+  mediaType       String   @map("media_type")
+  rating          Int
+  content         String?
+  // Snapshot do filme/série no momento da crítica (título e pôster),
+  // resolvido via TMDB na criação — evita depender de uma chamada externa
+  // toda vez que a review é lida (feed, perfil, página do filme).
+  movieTitle      String?  @map("movie_title")
+  moviePosterPath String?  @map("movie_poster_path")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   votes Vote[]

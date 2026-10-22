@@ -89,6 +89,8 @@ export class InMemoryReviewsRepository implements ReviewsRepository {
         mediaType: review.mediaType,
         rating: review.rating,
         content: review.content,
+        movieTitle: review.movieTitle,
+        moviePosterPath: review.moviePosterPath,
         createdAt: review.createdAt,
         updatedAt: review.updatedAt,
         author: {
